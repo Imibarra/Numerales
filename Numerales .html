@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz de Numerales: Definidos e Indefinidos</title>
+    <style>
+        /* --- ESTILOS CSS --- */
+        :root {
+            /* Colores principales */
+            --color-primary-dark: #2C3E50; /* Azul marino oscuro (casi negro) */
+            --color-primary-light: #5D9CEC; /* Azul claro para elementos activos */
+            --color-background: #ECF0F1; /* Gris muy claro, casi blanco (mate) */
+            --color-card-background: #FFFFFF; /* Blanco puro para tarjetas */
+            --color-text-dark: #34495E; /* Gris oscuro para texto */
+            --color-text-light: #BDC3C7; /* Gris claro para texto de progreso */
+            
+            /* Colores de feedback */
+            --color-correct: #27AE60; /* Verde brillante */
+            --color-incorrect: #E74C3C; /* Rojo brillante */
+            --color-info: #3498DB; /* Azul de información */
+
+            /* Colores de componentes específicos */
+            --color-chip-background: #D5E1EE; /* Azul grisáceo claro mate */
+            --color-chip-text: #2C3E50; /* Azul marino oscuro */
+            --color-chip-selected-bg: #4A6E8A; /* Azul marino medio para seleccionado */
+            --color-chip-selected-text: #FFFFFF; /* Blanco para texto seleccionado */
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--color-background);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            background-color: var(--color-card-background);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Sombra más suave */
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: var(--color-primary-dark);
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #EAECEE; /* Línea divisoria más suave */
+            padding-bottom: 10px;
+        }
+
+        .progress {
+            text-align: center;
+            color: var(--color-text-light);
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        /* Contenedor de la Oración */
+        .sentence-container {
+            border: 1px solid #DCE4E8; /* Borde más suave */
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            line-height: 1.8;
+            text-align: center;
+            background-color: #F8F9F9; /* Fondo ligeramente diferente para la oración */
+        }
+
+        /* Botón de Palabra (Token) */
+        .word-token {
+            background-color: var(--color-chip-background);
+            color: var(--color-chip-text);
+            border: none;
+            padding: 8px 12px;
+            margin: 4px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .word-token:hover {
+            background-color: #BDC3C7; /* Tono grisáceo al pasar el ratón */
+        }
+
+        .word-token.selected {
+            background-color: var(--color-chip-selected-bg);
+            color: var(--color-chip-selected-text);
+            font-weight: bold;
+        }
+
+        /* Opciones de Clasificación */
+        .classification-options {
+            text-align: center;
+            margin-top: 25px;
+            padding: 15px;
+            border-top: 1px solid #EAECEE;
+        }
+
+        .classification-btn {
+            background-color: var(--color-primary-light); /* Azul claro */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s;
+        }
+
+        .classification-btn:hover:not(:disabled) {
+            background-color: #4A89DC; /* Azul un poco más oscuro al pasar el ratón */
+        }
+
+        .classification-btn.correct {
+            background-color: var(--color-correct); /* Verde */
+        }
+
+        .classification-btn.incorrect {
+            background-color: var(--color-incorrect); /* Rojo */
+        }
+        
+        .classification-btn:disabled {
+            opacity: 0.6; /* Un poco menos opaco para deshabilitado */
+            cursor: not-allowed;
+            background-color: #BCC2C7; /* Gris suave para botones deshabilitados */
+        }
+
+        /* Mensaje de Feedback */
+        #feedback {
+            text-align: center;
+            font-size: 1.3em;
+            margin: 20px 0;
+            font-weight: bold;
+            min-height: 20px;
+        }
+
+        .feedback-correct { color: var(--color-correct); }
+        .feedback-incorrect { color: var(--color-incorrect); }
+        .feedback-info { color: var(--color-info); }
+
+        /* Botón de Avance */
+        #advance-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--color-primary-dark);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #advance-btn:disabled {
+            background-color: #A9B2BB; /* Tono grisáceo para deshabilitado */
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <h1>Quiz de Numerales</h1>
+
+    <div id="progress" class="progress">Oración 1 de 30</div>
+    
+    <div id="sentence-container" class="sentence-container">
+        </div>
+
+    <div id="classification-section">
+        <p style="text-align: center; font-size: 1.1em; color: var(--color-primary-dark);">Paso 2: Clasifica el numeral seleccionado.</p>
+        <div class="classification-options">
+            <button class="classification-btn" id="btn-definido" onclick="selectType('Definido')" disabled>Definido</button>
+            <button class="classification-btn" id="btn-indefinido" onclick="selectType('Indefinido')" disabled>Indefinido</button>
+        </div>
+    </div>
+
+    <div id="feedback" class="feedback-info">Selecciona el numeral en la oración.</div>
+
+    <button id="advance-btn" onclick="advanceQuiz()" disabled>Avanzar</button>
+</div>
+
+<script>
+    // --- DATOS DEL QUIZ (LISTA DE LAS 30 ORACIONES) ---
+    const quizData = [
+        { oracion: "Compramos dos kilos de manzanas.", numeral: "dos", tipo: "Definido" },
+        { oracion: "Hay varios libros en la mesa.", numeral: "varios", tipo: "Indefinido" },
+        { oracion: "Ganó el primer premio de la lotería.", numeral: "primer", tipo: "Definido" },
+        { oracion: "He comido media pizza yo solo.", numeral: "media", tipo: "Definido" },
+        { oracion: "Solamente vino algún compañero.", numeral: "algún", tipo: "Indefinido" },
+        { oracion: "Necesito doble ración de café.", numeral: "doble", tipo: "Definido" },
+        { oracion: "Faltan quince minutos para terminar.", numeral: "quince", tipo: "Definido" },
+        { oracion: "Leí muchos artículos sobre el tema.", numeral: "muchos", tipo: "Indefinido" },
+        { oracion: "Está celebrando su tercer cumpleaños.", numeral: "tercer", tipo: "Definido" },
+        { oracion: "Me sirvió una taza de café.", numeral: "una", tipo: "Definido" },
+        { oracion: "Recibió sendas felicitaciones.", numeral: "sendas", tipo: "Indefinido" },
+        { oracion: "Logró muchos beneficios.", numeral: "muchos", tipo: "Indefinido" },
+        { oracion: "Ambos testigos confirmaron la historia.", numeral: "ambos", tipo: "Definido" },
+        { oracion: "Había escasos recursos disponibles.", numeral: "escasos", tipo: "Indefinido" },
+        { oracion: "Vendimos cientos de entradas.", numeral: "cientos", tipo: "Definido" },
+        { oracion: "Quiero la décima parte de la herencia.", numeral: "décima", tipo: "Definido" },
+        { oracion: "Cualquier persona puede participar.", numeral: "cualquier", tipo: "Indefinido" },
+        { oracion: "Este es el segundo piso.", numeral: "segundo", tipo: "Definido" },
+        { oracion: "Trajo varias galletas.", numeral: "varias", tipo: "Indefinido" },
+        { oracion: "Encontramos un gato abandonado.", numeral: "un", tipo: "Definido" },
+        { oracion: "Me dio bastante dinero.", numeral: "bastante", tipo: "Indefinido" },
+        { oracion: "El deportista consiguió la medalla doble.", numeral: "doble", tipo: "Definido" },
+        { oracion: "Recibimos pocas quejas.", numeral: "pocas", tipo: "Indefinido" },
+        { oracion: "Solo había diez personas.", numeral: "diez", tipo: "Definido" },
+        { oracion: "Tuvimos que dividir la porción en cuatro.", numeral: "cuatro", tipo: "Definido" },
+        { oracion: "Vimos ningún error en el examen.", numeral: "ningún", tipo: "Indefinido" },
+        { oracion: "Ella es la última en la lista.", numeral: "última", tipo: "Definido" },
+        { oracion: "Tienen otra oportunidad.", numeral: "otra", tipo: "Indefinido" },
+        { oracion: "Comió un cuarto de la tarta.", numeral: "cuarto", tipo: "Definido" },
+        { oracion: "El esfuerzo fue máximo.", numeral: "máximo", tipo: "Indefinido" },
+    ];
+
+    // --- VARIABLES DE ESTADO ---
+    let currentIndex = 0;
+    let selectedNumeral = null;
+    let classificationCorrect = false;
+
+    // --- ELEMENTOS DEL DOM ---
+    const sentenceContainer = document.getElementById('sentence-container');
+    const feedbackElement = document.getElementById('feedback');
+    const advanceBtn = document.getElementById('advance-btn');
+    const progressElement = document.getElementById('progress');
+    const btnDefinido = document.getElementById('btn-definido');
+    const btnIndefinido = document.getElementById('btn-indefinido');
+
+    // --- FUNCIONES PRINCIPALES ---
+
+    /**
+     * Carga y renderiza la pregunta actual.
+     */
+    function loadQuestion() {
+        if (currentIndex >= quizData.length) {
+            sentenceContainer.innerHTML = '<h2>¡Cuestionario Terminado! 🎉</h2>';
+            feedbackElement.className = 'feedback-info';
+            feedbackElement.textContent = '¡Felicidades, has completado las 30 oraciones!';
+            advanceBtn.style.display = 'none';
+            document.getElementById('classification-section').style.display = 'none';
+            return;
+        }
+
+        const currentQuestion = quizData[currentIndex];
+        const words = currentQuestion.oracion.split(/\s+/); // Divide la oración en palabras
+        sentenceContainer.innerHTML = ''; // Limpia el contenedor
+
+        words.forEach(word => {
+            const token = document.createElement('button');
+            token.textContent = word;
+            token.classList.add('word-token');
+            token.onclick = () => selectWord(word, token);
+            sentenceContainer.appendChild(token);
+        });
+        
+        updateState(false);
+        progressElement.textContent = `Oración ${currentIndex + 1} de ${quizData.length}`;
+    }
+
+    /**
+     * Maneja la selección de una palabra en la oración (Paso 1).
+     * @param {string} word - La palabra seleccionada.
+     * @param {HTMLElement} tokenElement - El elemento del botón de la palabra.
+     */
+    function selectWord(word, tokenElement) {
+        // Reiniciar la selección visual de todas las palabras
+        document.querySelectorAll('.word-token').forEach(btn => btn.classList.remove('selected'));
+        
+        const currentQuestion = quizData[currentIndex];
+        
+        if (word.toLowerCase().replace(/[.,]/g, '') === currentQuestion.numeral.toLowerCase()) {
+            // --- VALIDACIÓN CORRECTA DEL NUMERAL ---
+            selectedNumeral = word;
+            tokenElement.classList.add('selected');
+            
+            feedbackElement.className = 'feedback-info';
+            feedbackElement.textContent = `¡Numeral seleccionado: ${word}! Ahora, clasifica el tipo.`;
+            
+            // Habilitar el Paso 2 (Clasificación)
+            btnDefinido.disabled = false;
+            btnIndefinido.disabled = false;
+            
+        } else {
+            // --- REQUISITO CLAVE: INCORRECTO Y BLOQUEO ---
+            selectedNumeral = null;
+            classificationCorrect = false;
+            
+            feedbackElement.className = 'feedback-incorrect';
+            feedbackElement.textContent = `❌ Incorrecto. Vuelve a seleccionar el numeral. No puedes avanzar.`;
+            
+            // Deshabilitar el Paso 2 y el Avance
+            btnDefinido.disabled = true;
+            btnIndefinido.disabled = true;
+            advanceBtn.disabled = true;
+        }
+    }
+
+    /**
+     * Maneja la selección del tipo de numeral (Paso 2).
+     * @param {string} type - El tipo seleccionado ("Definido" o "Indefinido").
+     */
+    function selectType(type) {
+        if (!selectedNumeral) {
+            feedbackElement.className = 'feedback-info';
+            feedbackElement.textContent = "Primero debes seleccionar el numeral en la oración.";
+            return;
+        }
+
+        // Reiniciar estilos de botones de clasificación
+        btnDefinido.classList.remove('correct', 'incorrect');
+        btnIndefinido.classList.remove('correct', 'incorrect');
+
+        const currentQuestion = quizData[currentIndex];
+        
+        if (type === currentQuestion.tipo) {
+            // --- DOBLE VALIDACIÓN CORRECTA ---
+            classificationCorrect = true;
+            feedbackElement.className = 'feedback-correct';
+            feedbackElement.textContent = `✅ ¡Correcto! Es un numeral ${type}.`;
+            document.getElementById(`btn-${type.toLowerCase()}`).classList.add('correct');
+            advanceBtn.disabled = false; // Habilitar avance
+            
+        } else {
+            // --- CLASIFICACIÓN INCORRECTA ---
+            classificationCorrect = false;
+            feedbackElement.className = 'feedback-incorrect';
+            feedbackElement.textContent = `❌ Incorrecto. El numeral es ${currentQuestion.numeral}, pero la clasificación es errónea.`;
+            document.getElementById(`btn-${type.toLowerCase()}`).classList.add('incorrect');
+            advanceBtn.disabled = true; // Bloquear avance
+        }
+    }
+
+    /**
+     * Actualiza el estado de la aplicación.
+     * @param {boolean} resetClassification - Si se debe resetear la clasificación.
+     */
+    function updateState(resetClassification) {
+        selectedNumeral = null;
+        classificationCorrect = false;
+        
+        // Resetear visualmente
+        document.querySelectorAll('.word-token').forEach(btn => btn.classList.remove('selected'));
+        btnDefinido.classList.remove('correct', 'incorrect');
+        btnIndefinido.classList.remove('correct', 'incorrect');
+        
+        // Deshabilitar botones de clasificación y avance
+        btnDefinido.disabled = true;
+        btnIndefinido.disabled = true;
+        advanceBtn.disabled = true;
+
+        if (resetClassification) {
+            feedbackElement.className = 'feedback-info';
+            feedbackElement.textContent = "Selecciona el numeral en la oración.";
+        }
+    }
+
+    /**
+     * Mueve el quiz a la siguiente pregunta.
+     */
+    function advanceQuiz() {
+        if (classificationCorrect && selectedNumeral) {
+            currentIndex++;
+            loadQuestion();
+        } else {
+            // Esto no debería pasar si el botón está deshabilitado
+            alert("Completa la doble validación correctamente antes de avanzar.");
+        }
+    }
+
+    // Inicializar el quiz al cargar la página
+    window.onload = loadQuestion;
+
+</script>
+
+</body>
+</html>
