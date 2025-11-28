@@ -3,385 +3,574 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz de Numerales: Definidos e Indefinidos</title>
+    <title>Clasificador de Numerales</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* --- ESTILOS CSS --- */
-        :root {
-            /* Colores principales */
-            --color-primary-dark: #2C3E50; /* Azul marino oscuro (casi negro) */
-            --color-primary-light: #5D9CEC; /* Azul claro para elementos activos */
-            --color-background: #ECF0F1; /* Gris muy claro, casi blanco (mate) */
-            --color-card-background: #FFFFFF; /* Blanco puro para tarjetas */
-            --color-text-dark: #34495E; /* Gris oscuro para texto */
-            --color-text-light: #BDC3C7; /* Gris claro para texto de progreso */
-            
-            /* Colores de feedback */
-            --color-correct: #27AE60; /* Verde brillante */
-            --color-incorrect: #E74C3C; /* Rojo brillante */
-            --color-info: #3498DB; /* Azul de información */
-
-            /* Colores de componentes específicos */
-            --color-chip-background: #D5E1EE; /* Azul grisáceo claro mate */
-            --color-chip-text: #2C3E50; /* Azul marino oscuro */
-            --color-chip-selected-bg: #4A6E8A; /* Azul marino medio para seleccionado */
-            --color-chip-selected-text: #FFFFFF; /* Blanco para texto seleccionado */
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: var(--color-background);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-        }
-
-        .app-container {
-            background-color: var(--color-card-background);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Sombra más suave */
-            max-width: 600px;
-            width: 100%;
-        }
-
-        h1 {
-            color: var(--color-primary-dark);
-            text-align: center;
-            margin-bottom: 25px;
-            border-bottom: 2px solid #EAECEE; /* Línea divisoria más suave */
-            padding-bottom: 10px;
-        }
-
-        .progress {
-            text-align: center;
-            color: var(--color-text-light);
-            margin-bottom: 20px;
-            font-size: 1.1em;
-        }
-
-        /* Contenedor de la Oración */
-        .sentence-container {
-            border: 1px solid #DCE4E8; /* Borde más suave */
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            line-height: 1.8;
-            text-align: center;
-            background-color: #F8F9F9; /* Fondo ligeramente diferente para la oración */
-        }
-
-        /* Botón de Palabra (Token) */
-        .word-token {
-            background-color: var(--color-chip-background);
-            color: var(--color-chip-text);
-            border: none;
-            padding: 8px 12px;
-            margin: 4px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 1.1em;
-            transition: background-color 0.2s, transform 0.1s;
-        }
-
-        .word-token:hover {
-            background-color: #BDC3C7; /* Tono grisáceo al pasar el ratón */
-        }
-
-        .word-token.selected {
-            background-color: var(--color-chip-selected-bg);
-            color: var(--color-chip-selected-text);
-            font-weight: bold;
-        }
-
-        /* Opciones de Clasificación */
-        .classification-options {
-            text-align: center;
-            margin-top: 25px;
-            padding: 15px;
-            border-top: 1px solid #EAECEE;
-        }
-
-        .classification-btn {
-            background-color: var(--color-primary-light); /* Azul claro */
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            margin: 5px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.2s;
-        }
-
-        .classification-btn:hover:not(:disabled) {
-            background-color: #4A89DC; /* Azul un poco más oscuro al pasar el ratón */
-        }
-
-        .classification-btn.correct {
-            background-color: var(--color-correct); /* Verde */
-        }
-
-        .classification-btn.incorrect {
-            background-color: var(--color-incorrect); /* Rojo */
-        }
-        
-        .classification-btn:disabled {
-            opacity: 0.6; /* Un poco menos opaco para deshabilitado */
-            cursor: not-allowed;
-            background-color: #BCC2C7; /* Gris suave para botones deshabilitados */
-        }
-
-        /* Mensaje de Feedback */
-        #feedback {
-            text-align: center;
-            font-size: 1.3em;
-            margin: 20px 0;
-            font-weight: bold;
-            min-height: 20px;
-        }
-
-        .feedback-correct { color: var(--color-correct); }
-        .feedback-incorrect { color: var(--color-incorrect); }
-        .feedback-info { color: var(--color-info); }
-
-        /* Botón de Avance */
-        #advance-btn {
-            width: 100%;
-            padding: 15px;
-            background-color: var(--color-primary-dark);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.2em;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        #advance-btn:disabled {
-            background-color: #A9B2BB; /* Tono grisáceo para deshabilitado */
-            cursor: not-allowed;
-        }
+        /* Configuración personalizada de la fuente Inter */
+        html { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen p-4 flex items-center justify-center">
 
-<div class="app-container">
-    <h1>Quiz de Numerales</h1>
+    <!-- Contenedor principal de la aplicación -->
+    <div id="app-container" class="w-full max-w-2xl bg-white shadow-2xl rounded-xl p-8 transition-all duration-300">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-extrabold text-indigo-700">Identificador de Numerales</h1>
+            <p class="text-gray-500 mt-2">Encuentra el numeral en la oración y clasifícalo.</p>
+            <!-- ID de Usuario OCULTO, solo visible si se quita la clase 'hidden' -->
+            <p id="user-id-display" class="hidden text-xs mt-1 text-gray-400">ID Usuario: Cargando...</p>
+        </header>
 
-    <div id="progress" class="progress">Oración 1 de 30</div>
-    
-    <div id="sentence-container" class="sentence-container">
-        </div>
+        <!-- Zona de Oración y Controles -->
+        <main>
+            <div id="sentence-card" class="bg-indigo-50 p-6 rounded-lg border-2 border-indigo-200 mb-6 shadow-inner">
+                <p class="text-sm font-medium text-indigo-600 mb-2">Pregunta <span id="current-index">0</span> de <span id="total-sentences">0</span></p>
+                <!-- Usamos text-lg para hacer la oración más legible -->
+                <p id="sentence-text" class="text-xl font-semibold text-gray-800 italic">Cargando ejercicio...</p>
+            </div>
 
-    <div id="classification-section">
-        <p style="text-align: center; font-size: 1.1em; color: var(--color-primary-dark);">Paso 2: Clasifica el numeral seleccionado.</p>
-        <div class="classification-options">
-            <button class="classification-btn" id="btn-definido" onclick="selectType('Definido')" disabled>Definido</button>
-            <button class="classification-btn" id="btn-indefinido" onclick="selectType('Indefinido')" disabled>Indefinido</button>
-        </div>
+            <!-- Inputs del Usuario -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                
+                <!-- Input: Numeral -->
+                <div class="space-y-1">
+                    <label for="numeral-input" class="block text-sm font-medium text-gray-700">1. Identifica el Numeral</label>
+                    <input type="text" id="numeral-input" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" placeholder="Escribe el numeral...">
+                </div>
+
+                <!-- Select: Tipo -->
+                <div class="space-y-1">
+                    <label for="type-select" class="block text-sm font-medium text-gray-700">2. Tipo de Numeral</label>
+                    <select id="type-select" class="w-full p-2 border border-gray-300 rounded-lg bg-white focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
+                        <option value="" disabled selected>Seleccionar tipo</option>
+                        <option value="cardinal">Cardinal</option>
+                        <option value="ordinal">Ordinal</option>
+                    </select>
+                </div>
+
+                <!-- Select: Función -->
+                <div class="space-y-1">
+                    <label for="function-select" class="block text-sm font-medium text-gray-700">3. Función Gramatical</label>
+                    <select id="function-select" class="w-full p-2 border border-gray-300 rounded-lg bg-white focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
+                        <option value="" disabled selected>Seleccionar función</option>
+                        <option value="determinante">Determinante</option>
+                        <option value="nucleo">Núcleo</option>
+                        <option value="complemento">Complemento</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Botones y Puntuación -->
+            <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <button id="check-button" onclick="checkAnswer()" class="w-full sm:w-auto px-6 py-3 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition duration-150 transform hover:scale-[1.01] shadow-lg shadow-indigo-200/50" disabled>
+                    Comprobar Respuesta
+                </button>
+                <div class="text-lg font-bold text-gray-700 bg-gray-100 p-3 rounded-lg w-full sm:w-auto text-center">
+                    Puntuación: <span id="score-display" class="text-indigo-600">0</span>
+                </div>
+            </div>
+
+            <!-- Área de Feedback y Resultado -->
+            <div id="feedback-area" class="mt-6 p-4 rounded-lg hidden transition-all duration-300" role="alert">
+                <p id="feedback-message" class="font-medium"></p>
+                <div id="correct-answer-details" class="text-sm mt-2 font-mono italic hidden"></div>
+            </div>
+
+            <button id="next-button" onclick="loadSentence(true)" class="hidden mt-4 w-full px-6 py-3 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 focus:outline-none focus:ring-4 focus:ring-green-400 focus:ring-opacity-50 transition duration-150 shadow-lg shadow-green-200/50">
+                Siguiente Oración →
+            </button>
+            
+            <button id="restart-button" onclick="restartQuiz()" class="hidden mt-4 w-full px-6 py-3 bg-yellow-500 text-white font-bold rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-4 focus:ring-yellow-400 focus:ring-opacity-50 transition duration-150 shadow-lg shadow-yellow-200/50">
+                Reiniciar Prueba
+            </button>
+        </main>
     </div>
 
-    <div id="feedback" class="feedback-info">Selecciona el numeral en la oración.</div>
+    <!-- Script de Firebase (MANDATORIO) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, getDoc, getDocs, query, where, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    <button id="advance-btn" onclick="advanceQuiz()" disabled>Avanzar</button>
-</div>
+        // setLogLevel('Debug'); // Habilitar logs de Firebase
 
-<script>
-    // --- DATOS DEL QUIZ (LISTA DE LAS 30 ORACIONES) ---
-    const quizData = [
-        { oracion: "Compramos dos kilos de manzanas.", numeral: "dos", tipo: "Definido" },
-        { oracion: "Hay varios libros en la mesa.", numeral: "varios", tipo: "Indefinido" },
-        { oracion: "Ganó el primer premio de la lotería.", numeral: "primer", tipo: "Definido" },
-        { oracion: "He comido media pizza yo solo.", numeral: "media", tipo: "Definido" },
-        { oracion: "Solamente vino algún compañero.", numeral: "algún", tipo: "Indefinido" },
-        { oracion: "Necesito doble ración de café.", numeral: "doble", tipo: "Definido" },
-        { oracion: "Faltan quince minutos para terminar.", numeral: "quince", tipo: "Definido" },
-        { oracion: "Leí muchos artículos sobre el tema.", numeral: "muchos", tipo: "Indefinido" },
-        { oracion: "Está celebrando su tercer cumpleaños.", numeral: "tercer", tipo: "Definido" },
-        { oracion: "Me sirvió una taza de café.", numeral: "una", tipo: "Definido" },
-        { oracion: "Recibió sendas felicitaciones.", numeral: "sendas", tipo: "Indefinido" },
-        { oracion: "Logró muchos beneficios.", numeral: "muchos", tipo: "Indefinido" },
-        { oracion: "Ambos testigos confirmaron la historia.", numeral: "ambos", tipo: "Definido" },
-        { oracion: "Había escasos recursos disponibles.", numeral: "escasos", tipo: "Indefinido" },
-        { oracion: "Vendimos cientos de entradas.", numeral: "cientos", tipo: "Definido" },
-        { oracion: "Quiero la décima parte de la herencia.", numeral: "décima", tipo: "Definido" },
-        { oracion: "Cualquier persona puede participar.", numeral: "cualquier", tipo: "Indefinido" },
-        { oracion: "Este es el segundo piso.", numeral: "segundo", tipo: "Definido" },
-        { oracion: "Trajo varias galletas.", numeral: "varias", tipo: "Indefinido" },
-        { oracion: "Encontramos un gato abandonado.", numeral: "un", tipo: "Definido" },
-        { oracion: "Me dio bastante dinero.", numeral: "bastante", tipo: "Indefinido" },
-        { oracion: "El deportista consiguió la medalla doble.", numeral: "doble", tipo: "Definido" },
-        { oracion: "Recibimos pocas quejas.", numeral: "pocas", tipo: "Indefinido" },
-        { oracion: "Solo había diez personas.", numeral: "diez", tipo: "Definido" },
-        { oracion: "Tuvimos que dividir la porción en cuatro.", numeral: "cuatro", tipo: "Definido" },
-        { oracion: "Vimos ningún error en el examen.", numeral: "ningún", tipo: "Indefinido" },
-        { oracion: "Ella es la última en la lista.", numeral: "última", tipo: "Definido" },
-        { oracion: "Tienen otra oportunidad.", numeral: "otra", tipo: "Indefinido" },
-        { oracion: "Comió un cuarto de la tarta.", numeral: "cuarto", tipo: "Definido" },
-        { oracion: "El esfuerzo fue máximo.", numeral: "máximo", tipo: "Indefinido" },
-    ];
+        // Variables globales (Accedidas por window.app, window.db, etc.)
+        window.quizData = [];
+        window.currentSentenceIndex = 0;
+        window.score = 0;
+        window.app = null;
+        window.db = null;
+        window.auth = null;
+        window.userId = null;
+        window.isAuthReady = false;
 
-    // --- VARIABLES DE ESTADO ---
-    let currentIndex = 0;
-    let selectedNumeral = null;
-    let classificationCorrect = false;
+        // 1. Configuración de Firebase
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-    // --- ELEMENTOS DEL DOM ---
-    const sentenceContainer = document.getElementById('sentence-container');
-    const feedbackElement = document.getElementById('feedback');
-    const advanceBtn = document.getElementById('advance-btn');
-    const progressElement = document.getElementById('progress');
-    const btnDefinido = document.getElementById('btn-definido');
-    const btnIndefinido = document.getElementById('btn-indefinido');
+        /**
+         * Inicializa Firebase, autentica al usuario y carga la primera oración.
+         */
+        async function initializeAppAndAuth() {
+            try {
+                if (Object.keys(firebaseConfig).length === 0) {
+                    console.error("Firebase config is missing. Proceeding without database features.");
+                    // Si no hay configuración, aún cargamos la interfaz
+                    window.isAuthReady = true;
+                    window.userId = 'anon-user-' + Math.random().toString(36).substring(2, 9);
+                    // document.getElementById('user-id-display').textContent = `ID Usuario: ${window.userId} (Simulado)`;
+                    window.loadSentence(false); // Cargar la primera oración sin esperar autenticación
+                    return;
+                }
 
-    // --- FUNCIONES PRINCIPALES ---
+                window.app = initializeApp(firebaseConfig);
+                window.db = getFirestore(window.app);
+                window.auth = getAuth(window.app);
 
-    /**
-     * Carga y renderiza la pregunta actual.
-     */
-    function loadQuestion() {
-        if (currentIndex >= quizData.length) {
-            sentenceContainer.innerHTML = '<h2>¡Cuestionario Terminado! 🎉</h2>';
-            feedbackElement.className = 'feedback-info';
-            feedbackElement.textContent = '¡Felicidades, has completado las 30 oraciones!';
-            advanceBtn.style.display = 'none';
-            document.getElementById('classification-section').style.display = 'none';
-            return;
+                // Autenticación
+                if (initialAuthToken) {
+                    await signInWithCustomToken(window.auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(window.auth);
+                }
+
+                // Esperar el cambio de estado de autenticación
+                onAuthStateChanged(window.auth, (user) => {
+                    if (user) {
+                        window.userId = user.uid;
+                        // document.getElementById('user-id-display').textContent = `ID Usuario: ${user.uid}`;
+                        window.isAuthReady = true;
+                        window.loadSentence(false);
+                        console.log("Authentication successful. User ID:", user.uid);
+                    } else {
+                        // User signed out, or sign-in failed. This should not happen if custom token/anonymous works.
+                        console.error("Authentication failed or user signed out.");
+                        window.isAuthReady = true; // Still ready to proceed without auth features
+                        window.loadSentence(false);
+                    }
+                });
+
+            } catch (error) {
+                console.error("Error during Firebase initialization or authentication:", error);
+                window.isAuthReady = true;
+                window.loadSentence(false);
+            }
         }
 
-        const currentQuestion = quizData[currentIndex];
-        const words = currentQuestion.oracion.split(/\s+/); // Divide la oración en palabras
-        sentenceContainer.innerHTML = ''; // Limpia el contenedor
-
-        words.forEach(word => {
-            const token = document.createElement('button');
-            token.textContent = word;
-            token.classList.add('word-token');
-            token.onclick = () => selectWord(word, token);
-            sentenceContainer.appendChild(token);
-        });
-        
-        updateState(false);
-        progressElement.textContent = `Oración ${currentIndex + 1} de ${quizData.length}`;
-    }
-
-    /**
-     * Maneja la selección de una palabra en la oración (Paso 1).
-     * @param {string} word - La palabra seleccionada.
-     * @param {HTMLElement} tokenElement - El elemento del botón de la palabra.
-     */
-    function selectWord(word, tokenElement) {
-        // Reiniciar la selección visual de todas las palabras
-        document.querySelectorAll('.word-token').forEach(btn => btn.classList.remove('selected'));
-        
-        const currentQuestion = quizData[currentIndex];
-        
-        if (word.toLowerCase().replace(/[.,]/g, '') === currentQuestion.numeral.toLowerCase()) {
-            // --- VALIDACIÓN CORRECTA DEL NUMERAL ---
-            selectedNumeral = word;
-            tokenElement.classList.add('selected');
-            
-            feedbackElement.className = 'feedback-info';
-            feedbackElement.textContent = `¡Numeral seleccionado: ${word}! Ahora, clasifica el tipo.`;
-            
-            // Habilitar el Paso 2 (Clasificación)
-            btnDefinido.disabled = false;
-            btnIndefinido.disabled = false;
-            
-        } else {
-            // --- REQUISITO CLAVE: INCORRECTO Y BLOQUEO ---
-            selectedNumeral = null;
-            classificationCorrect = false;
-            
-            feedbackElement.className = 'feedback-incorrect';
-            feedbackElement.textContent = `❌ Incorrecto. Vuelve a seleccionar el numeral. No puedes avanzar.`;
-            
-            // Deshabilitar el Paso 2 y el Avance
-            btnDefinido.disabled = true;
-            btnIndefinido.disabled = true;
-            advanceBtn.disabled = true;
-        }
-    }
-
-    /**
-     * Maneja la selección del tipo de numeral (Paso 2).
-     * @param {string} type - El tipo seleccionado ("Definido" o "Indefinido").
-     */
-    function selectType(type) {
-        if (!selectedNumeral) {
-            feedbackElement.className = 'feedback-info';
-            feedbackElement.textContent = "Primero debes seleccionar el numeral en la oración.";
-            return;
+        /**
+         * Normaliza el texto eliminando tildes/acentos para permitir coincidencias flexibles.
+         * @param {string} text El texto a normalizar.
+         * @returns {string} El texto sin acentos.
+         */
+        function normalizeText(text) {
+            if (!text) return '';
+            // Usa normalize("NFD") para descomponer los caracteres con tildes en su base y el diacrítico, 
+            // y luego remueve el diacrítico.
+            return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         }
 
-        // Reiniciar estilos de botones de clasificación
-        btnDefinido.classList.remove('correct', 'incorrect');
-        btnIndefinido.classList.remove('correct', 'incorrect');
+        // 2. Datos y Lógica del Quiz
+        // Los datos se mantienen fijos para asegurar el orden. Se ajusta un caso para la consistencia
+        // con la regla: Delante del sustantivo = Determinante (Vino una vez).
+        window.quizData = [
+            {
+                sentence: 'Llegaron tres.',
+                numeral: 'tres',
+                type: 'cardinal',
+                function: 'nucleo',
+                hint: 'El numeral funciona como el sujeto de la oración, reemplazando al sustantivo (Núcleo).'
+            },
+            {
+                sentence: 'Tomó dos más tarde.',
+                numeral: 'dos',
+                type: 'cardinal',
+                function: 'nucleo',
+                hint: 'El numeral actúa como objeto directo sin un sustantivo explícito (Núcleo).'
+            },
+            {
+                sentence: 'Los primeros llegaron temprano.',
+                numeral: 'primeros',
+                type: 'ordinal',
+                function: 'nucleo',
+                hint: 'El numeral funciona como el sujeto de la oración (sustantivado por "Los"), por lo tanto es Núcleo.'
+            },
+            {
+                sentence: 'Este es mi segundo café.',
+                numeral: 'segundo',
+                type: 'ordinal',
+                function: 'determinante',
+                hint: 'El numeral modifica directamente al sustantivo "café" y aparece delante de él (Determinante).'
+            },
+            {
+                sentence: 'Compré cuatro manzanas.',
+                numeral: 'cuatro',
+                type: 'cardinal',
+                function: 'determinante',
+                hint: 'El numeral modifica directamente al sustantivo "manzanas" y aparece delante de él (Determinante).'
+            },
+            {
+                sentence: 'Perdió por tres.',
+                numeral: 'tres',
+                type: 'cardinal',
+                function: 'nucleo',
+                hint: 'El numeral actúa como el complemento de la preposición "por", sin sustantivo explícito (Núcleo).'
+            },
+            {
+                sentence: 'Ella vive en el piso quinto.',
+                numeral: 'quinto',
+                type: 'ordinal',
+                function: 'complemento',
+                hint: 'El numeral aparece detrás del sustantivo "piso", por lo tanto, es Complemento.'
+            },
+            {
+                sentence: 'Necesito una respuesta.',
+                numeral: 'una',
+                type: 'cardinal',
+                function: 'determinante',
+                hint: 'El numeral modifica directamente al sustantivo "respuesta" y aparece delante de él (Determinante).'
+            },
+            {
+                sentence: 'Llegamos dos.',
+                numeral: 'dos',
+                type: 'cardinal',
+                function: 'nucleo',
+                hint: 'El numeral funciona como el sujeto de la oración, reemplazando al sustantivo (Núcleo).'
+            },
+            {
+                sentence: 'Este es su primer libro.',
+                numeral: 'primer',
+                type: 'ordinal',
+                function: 'determinante',
+                hint: 'El numeral modifica directamente al sustantivo "libro" y aparece delante de él (Determinante).'
+            },
+            {
+                sentence: 'Pagó cinco por la entrada.',
+                numeral: 'cinco',
+                type: 'cardinal',
+                function: 'nucleo',
+                hint: 'El numeral actúa como objeto directo (cantidad de dinero) sin sustantivo explícito (Núcleo).'
+            },
+            {
+                sentence: 'Se quedó en el asiento tercero.',
+                numeral: 'tercero',
+                type: 'ordinal',
+                function: 'complemento',
+                hint: 'El numeral aparece detrás del sustantivo "asiento", por lo tanto, es Complemento.'
+            },
+            {
+                sentence: 'Leí veinte páginas.',
+                numeral: 'veinte',
+                type: 'cardinal',
+                function: 'determinante',
+                hint: 'El numeral modifica directamente al sustantivo "páginas" y aparece delante de él (Determinante).'
+            },
+            {
+                sentence: 'Somos cuatro.',
+                numeral: 'cuatro',
+                type: 'cardinal',
+                function: 'nucleo',
+                hint: 'El numeral funciona como atributo o predicativo, reemplazando al sustantivo (Núcleo).'
+            },
+            {
+                sentence: 'Alcanzó el puesto segundo.',
+                numeral: 'segundo',
+                type: 'ordinal',
+                function: 'complemento',
+                hint: 'El numeral aparece detrás del sustantivo "puesto", por lo tanto, es Complemento.'
+            },
+            {
+                sentence: 'Compré dos flores.',
+                numeral: 'dos',
+                type: 'cardinal',
+                function: 'determinante',
+                hint: 'El numeral modifica directamente al sustantivo "flores" y aparece delante de él (Determinante).'
+            },
+            {
+                sentence: 'Los terceros no participaron.',
+                numeral: 'terceros',
+                type: 'ordinal',
+                function: 'nucleo',
+                hint: 'El numeral funciona como el sujeto de la oración (sustantivado por "Los"), por lo tanto es Núcleo.'
+            },
+            {
+                sentence: 'Esperamos treinta minutos.',
+                numeral: 'treinta',
+                type: 'cardinal',
+                function: 'determinante',
+                hint: 'El numeral modifica directamente al sustantivo "minutos" y aparece delante de él (Determinante).'
+            },
+            {
+                sentence: 'Vino una vez.',
+                numeral: 'una',
+                type: 'cardinal',
+                function: 'determinante', // Ajustado a Determinante (Delante del sustantivo "vez")
+                hint: 'El numeral "una" aparece delante del sustantivo "vez", por lo tanto, es Determinante.'
+            },
+            {
+                sentence: 'El capítulo octavo es el más largo.',
+                numeral: 'octavo',
+                type: 'ordinal',
+                function: 'determinante',
+                hint: 'El numeral modifica directamente al sustantivo "capítulo" y aparece delante de él (Determinante).'
+            },
+            {
+                sentence: 'Vi seis en la mesa.',
+                numeral: 'seis',
+                type: 'cardinal',
+                function: 'nucleo',
+                hint: 'El numeral actúa como objeto directo sin un sustantivo explícito (Núcleo).'
+            },
+            {
+                sentence: 'Estamos en el piso décimo.',
+                numeral: 'décimo',
+                type: 'ordinal',
+                function: 'complemento',
+                hint: 'El numeral aparece detrás del sustantivo "piso", por lo tanto, es Complemento.'
+            },
+            {
+                sentence: 'Compramos tres entradas.',
+                numeral: 'tres',
+                type: 'cardinal',
+                function: 'determinante',
+                hint: 'El numeral modifica directamente al sustantivo "entradas" y aparece delante de él (Determinante).'
+            },
+            {
+                sentence: 'Ella terminó en lugar cuarto.',
+                numeral: 'cuarto',
+                type: 'ordinal',
+                function: 'complemento',
+                hint: 'El numeral aparece detrás del sustantivo "lugar", por lo tanto, es Complemento.'
+            },
+            {
+                sentence: 'Llegaron dos temprano.',
+                numeral: 'dos',
+                type: 'cardinal',
+                function: 'nucleo',
+                hint: 'El numeral funciona como el sujeto de la oración, reemplazando al sustantivo (Núcleo).'
+            },
+            {
+                sentence: 'Tienes una llamada.',
+                numeral: 'una',
+                type: 'cardinal',
+                function: 'determinante',
+                hint: 'El numeral modifica directamente al sustantivo "llamada" y aparece delante de él (Determinante).'
+            },
+            {
+                sentence: 'Ocupó la habitación séptima.',
+                numeral: 'séptima',
+                type: 'ordinal',
+                function: 'determinante',
+                hint: 'El numeral modifica directamente al sustantivo "habitación" y aparece delante de él (Determinante).'
+            },
+            {
+                sentence: 'Faltan cuatro para empezar.',
+                numeral: 'cuatro',
+                type: 'cardinal',
+                function: 'nucleo',
+                hint: 'El numeral funciona como el sujeto de la oración, reemplazando al sustantivo (Núcleo).'
+            },
+            {
+                sentence: 'Fue su segundo intento.',
+                numeral: 'segundo',
+                type: 'ordinal',
+                function: 'determinante',
+                hint: 'El numeral modifica directamente al sustantivo "intento" y aparece delante de él (Determinante).'
+            },
+            {
+                sentence: 'Conté cien personas.',
+                numeral: 'cien',
+                type: 'cardinal',
+                function: 'determinante',
+                hint: 'El numeral modifica directamente al sustantivo "personas" y aparece delante de él (Determinante).'
+            }
+        ];
 
-        const currentQuestion = quizData[currentIndex];
-        
-        if (type === currentQuestion.tipo) {
-            // --- DOBLE VALIDACIÓN CORRECTA ---
-            classificationCorrect = true;
-            feedbackElement.className = 'feedback-correct';
-            feedbackElement.textContent = `✅ ¡Correcto! Es un numeral ${type}.`;
-            document.getElementById(`btn-${type.toLowerCase()}`).classList.add('correct');
-            advanceBtn.disabled = false; // Habilitar avance
+        /**
+         * Mezcla los elementos de un array. (FUNCIÓN NO USADA PARA MANTENER EL ORDEN FIJO)
+         * @param {Array} array El array a mezclar.
+         */
+        window.shuffleArray = (array) => {
+            // Se mantiene la función por si se quiere habilitar la aleatoriedad más tarde
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        };
+
+        /**
+         * Carga la oración actual en la interfaz.
+         * @param {boolean} isNext Indica si se está cargando la siguiente oración después de una comprobación.
+         */
+        window.loadSentence = (isNext) => {
+            document.getElementById('check-button').disabled = false;
+            document.getElementById('next-button').classList.add('hidden');
+            document.getElementById('feedback-area').classList.add('hidden');
+
+            if (isNext) {
+                window.currentSentenceIndex++;
+            }
+
+            // Si hemos terminado el quiz
+            if (window.currentSentenceIndex >= window.quizData.length) {
+                const finalScore = window.score;
+                const total = window.quizData.length;
+                document.getElementById('sentence-text').textContent = `¡Prueba terminada! Obtuviste ${finalScore} de ${total} respuestas correctas.`;
+                document.getElementById('sentence-card').classList.remove('border-indigo-200');
+                document.getElementById('sentence-card').classList.add('border-green-500');
+                document.getElementById('check-button').classList.add('hidden');
+                document.getElementById('restart-button').classList.remove('hidden');
+                // Intentar guardar el puntaje si Firebase está listo
+                if (window.isAuthReady && window.userId && window.db) {
+                    saveScore(finalScore);
+                }
+                return;
+            }
             
-        } else {
-            // --- CLASIFICACIÓN INCORRECTA ---
-            classificationCorrect = false;
-            feedbackElement.className = 'feedback-incorrect';
-            feedbackElement.textContent = `❌ Incorrecto. El numeral es ${currentQuestion.numeral}, pero la clasificación es errónea.`;
-            document.getElementById(`btn-${type.toLowerCase()}`).classList.add('incorrect');
-            advanceBtn.disabled = true; // Bloquear avance
-        }
-    }
+            // Cargar la siguiente oración
+            const currentItem = window.quizData[window.currentSentenceIndex];
+            // Importante: Usamos textContent para no resaltar el numeral.
+            document.getElementById('sentence-text').textContent = currentItem.sentence;
+            document.getElementById('current-index').textContent = window.currentSentenceIndex + 1;
+            document.getElementById('total-sentences').textContent = window.quizData.length;
 
-    /**
-     * Actualiza el estado de la aplicación.
-     * @param {boolean} resetClassification - Si se debe resetear la clasificación.
-     */
-    function updateState(resetClassification) {
-        selectedNumeral = null;
-        classificationCorrect = false;
+            // Limpiar inputs
+            document.getElementById('numeral-input').value = '';
+            document.getElementById('type-select').value = '';
+            document.getElementById('function-select').value = '';
+            document.getElementById('numeral-input').focus();
+        };
+
+        /**
+         * Comprueba la respuesta del usuario.
+         */
+        window.checkAnswer = () => {
+            const currentItem = window.quizData[window.currentSentenceIndex];
+            const userInput = {
+                numeral: document.getElementById('numeral-input').value.trim().toLowerCase(),
+                type: document.getElementById('type-select').value,
+                function: document.getElementById('function-select').value
+            };
+
+            // Normalizar la respuesta esperada
+            const expected = {
+                numeral: currentItem.numeral.toLowerCase(),
+                type: currentItem.type,
+                function: currentItem.function
+            };
+
+            // --- Lógica de comprobación de Numeral con tilde flexible ---
+            const numeralInputNormalized = normalizeText(userInput.numeral);
+            const expectedNumeralNormalized = normalizeText(expected.numeral);
+
+            // 1. Comprobación estricta (con tilde)
+            let isNumeralCorrect = userInput.numeral === expected.numeral; 
+            
+            // 2. Comprobación flexible (sin tilde)
+            const isNumeralCorrectNormalized = numeralInputNormalized === expectedNumeralNormalized;
+            
+            // Flag para la advertencia de tilde
+            let hasAccentWarning = false;
+
+            if (!isNumeralCorrect && isNumeralCorrectNormalized) {
+                // El usuario se equivocó en la tilde, pero la palabra es correcta.
+                isNumeralCorrect = true; // Contar como correcto
+                hasAccentWarning = true; // Mostrar aviso
+            }
+
+            // --- Comprobación de Tipo y Función ---
+            const isTypeCorrect = userInput.type === expected.type;
+            const isFunctionCorrect = userInput.function === expected.function;
+
+            let isCorrect = isNumeralCorrect && isTypeCorrect && isFunctionCorrect;
+
+            const feedbackArea = document.getElementById('feedback-area');
+            const feedbackMessage = document.getElementById('feedback-message');
+            const detailsDiv = document.getElementById('correct-answer-details');
+            const nextButton = document.getElementById('next-button');
+
+            // Mostrar el área de feedback
+            feedbackArea.classList.remove('hidden', 'bg-red-100', 'bg-green-100');
+            detailsDiv.classList.add('hidden');
+            nextButton.classList.remove('hidden');
+            document.getElementById('check-button').disabled = true;
+
+            if (isCorrect) {
+                window.score++;
+                document.getElementById('score-display').textContent = window.score;
+                feedbackArea.classList.add('bg-green-100');
+                feedbackMessage.classList.add('text-green-800');
+                
+                feedbackMessage.textContent = '¡Correcto! Todos los campos son correctos.';
+
+                if (hasAccentWarning) {
+                    // Agrega el aviso si se omitió la tilde
+                    feedbackMessage.innerHTML = '¡Correcto! Todos los campos son correctos. <span class="text-yellow-700 block mt-1 font-normal">⚠️ Aviso: ¡Recuerda la tilde en el numeral!</span>';
+                }
+
+                detailsDiv.textContent = `Numeral: ${expected.numeral.toUpperCase()}, Tipo: ${expected.type.toUpperCase()}, Función: ${expected.function.toUpperCase()}.`;
+                detailsDiv.classList.remove('hidden');
+            } else {
+                feedbackArea.classList.add('bg-red-100');
+                feedbackMessage.classList.add('text-red-800');
+
+                // Detalle del error
+                let errorMessages = ['**Respuesta Incorrecta.**'];
+                // Notificamos específicamente los errores que llevaron a la respuesta incorrecta (Type/Function)
+                if (!isNumeralCorrect) errorMessages.push(`Numeral: Esperábamos **${expected.numeral}** (¡o sin tilde si es el único error!).`);
+                if (!isTypeCorrect) errorMessages.push(`Tipo: Esperábamos **${expected.type}**.`);
+                if (!isFunctionCorrect) errorMessages.push(`Función: Esperábamos **${expected.function}**.`);
+
+                feedbackMessage.innerHTML = errorMessages.join('<br>');
+                detailsDiv.textContent = `La respuesta correcta es: Numeral: ${expected.numeral.toUpperCase()}, Tipo: ${expected.type.toUpperCase()}, Función: ${expected.function.toUpperCase()}. Sugerencia: ${currentItem.hint}`;
+                detailsDiv.classList.remove('hidden');
+            }
+        };
+
+        /**
+         * Guarda el puntaje final del usuario en Firestore (si está inicializado).
+         * @param {number} finalScore El puntaje final.
+         */
+        async function saveScore(finalScore) {
+            if (!window.db || !window.userId) {
+                console.log("Database not ready or user ID missing. Score not saved.");
+                return;
+            }
+            try {
+                const today = new Date().toISOString().split('T')[0];
+                const docRef = doc(window.db, `artifacts/${appId}/users/${window.userId}/quiz_scores`, today);
+                await setDoc(docRef, {
+                    score: finalScore,
+                    total: window.quizData.length,
+                    timestamp: new Date().toISOString()
+                }, { merge: true });
+                console.log("Score saved successfully!");
+            } catch (e) {
+                console.error("Error saving document: ", e);
+            }
+        }
         
-        // Resetear visualmente
-        document.querySelectorAll('.word-token').forEach(btn => btn.classList.remove('selected'));
-        btnDefinido.classList.remove('correct', 'incorrect');
-        btnIndefinido.classList.remove('correct', 'incorrect');
-        
-        // Deshabilitar botones de clasificación y avance
-        btnDefinido.disabled = true;
-        btnIndefinido.disabled = true;
-        advanceBtn.disabled = true;
+        /**
+         * Reinicia el quiz al inicio.
+         */
+        window.restartQuiz = () => {
+            window.score = 0;
+            window.currentSentenceIndex = 0;
+            document.getElementById('score-display').textContent = 0;
+            document.getElementById('check-button').classList.remove('hidden');
+            document.getElementById('restart-button').classList.add('hidden');
+            document.getElementById('sentence-card').classList.remove('border-green-500');
+            document.getElementById('sentence-card').classList.add('border-indigo-200');
+            // NO se llama a window.shuffleArray para mantener el orden fijo.
+            window.loadSentence(false);
+        };
 
-        if (resetClassification) {
-            feedbackElement.className = 'feedback-info';
-            feedbackElement.textContent = "Selecciona el numeral en la oración.";
-        }
-    }
+        // 3. Inicialización
+        // NO se llama a window.shuffleArray para mantener el orden fijo.
+        initializeAppAndAuth();
 
-    /**
-     * Mueve el quiz a la siguiente pregunta.
-     */
-    function advanceQuiz() {
-        if (classificationCorrect && selectedNumeral) {
-            currentIndex++;
-            loadQuestion();
-        } else {
-            // Esto no debería pasar si el botón está deshabilitado
-            alert("Completa la doble validación correctamente antes de avanzar.");
-        }
-    }
-
-    // Inicializar el quiz al cargar la página
-    window.onload = loadQuestion;
-
-</script>
-
+    </script>
 </body>
 </html>
